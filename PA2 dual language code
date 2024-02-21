@@ -1,0 +1,358 @@
+// bonuses = Added liter to conversion list, added invalid cake number, Added Switch Language menu and functionality, added switch language option directly within menu. Added menu that prompts user to order more cakes within POS system. All bonus items converted to spanish too 
+class Program
+{
+    static string currentLanguage = "EN"; // Default language
+    static Dictionary<string, string> options;
+
+    static void Main(string[] args)
+    {
+        InitializeLocalization();
+        ChooseLanguage();
+        string userInput = "";
+        while (userInput != "3")
+        {
+            userInput = MenuOptions();
+            Route(userInput);
+        }
+    }
+
+    static void InitializeLocalization()
+    {
+        options = new Dictionary<string, string>
+        {
+            // English
+            {"EN_convertUnits", "1. Convert Units"},
+            {"EN_pos", "2. Bake My Day, Helene! POS"},
+            {"EN_exit", "3. Exit"},
+            {"EN_switchLanguage", "4. Switch Language (English/Spanish)"},
+            {"EN_promptChoice", "\nPlease enter your choice:"},
+            {"EN_thankYou", "Thank you for shopping at Bake My Day, Helene! We hope to have you back soon!"},
+            {"EN_invalidOption", "Oops! That option does not exist, please try again."},
+            {"EN_whichMeasureUnitHave", "Which measure unit do you have?"},
+            {"EN_whichMeasureUnitConvertTo", "Which measure unit do you wish to convert to?"},
+            {"EN_convertedFromTo", "You've converted from {0} {1} to {2}, which means you now have {3} {4}."},
+            {"EN_enterNumberCakes", "Please enter the number of cakes:"},
+            {"EN_needDelivery", "Do you need the cake delivered? Enter 1 for Yes, 0 for No:"},
+            {"EN_enterTipPercentage", "Please enter a tip percentage (e.g., 20 for 20%):"},
+            {"EN_grandTotal", "Your grand total is $"},
+            {"EN_changeBack", "Thank you! Your change back is $"},
+            {"EN_payBill", "Pay bill: "},
+            {"EN_amountStillOwed", "The amount you've entered is insufficient. You still owe: $"},
+            {"EN_amount", "Amount: "},
+            {"EN_invalidNumber", "Please enter a valid number."},
+            {"EN_pressContinue", "\nPress any key to continue..."},
+            {"EN_quart", "Quart"},
+            {"EN_pint", "Pint"},
+            {"EN_cup", "Cup"},
+            {"EN_ounce", "Ounce"},
+            {"EN_tablespoon", "Tablespoon"},
+            {"EN_teaspoon", "Teaspoon"},
+            {"EN_gallon", "Gallon"},
+            {"EN_liter", "Liter"},
+            {"EN_orderMoreCakes", "Would you like to order more cakes? Enter 'yes' or 'no':"},
+            {"EN_invalidCakeNumber", "Invalid number of cakes. Please enter at least 1."},
+            // Spanish
+            {"ES_convertUnits", "1. Convertir Unidades"},
+            {"ES_pos", "2. Punto de Venta de Bake My Day, Helene!"},
+            {"ES_exit", "3. Salir"},
+            {"ES_switchLanguage", "4. Cambiar Idioma (Ingles/Español)"},
+            {"ES_promptChoice", "\nPor favor, ingrese su elección:"},
+            {"ES_thankYou", "¡Gracias por comprar en Bake My Day, Helene! Esperamos tenerlo de vuelta pronto!"},
+            {"ES_invalidOption", "¡Andale! Esa opción no existe, por favor intente de nuevo ❤️"},
+            {"ES_whichMeasureUnitHave", "¿Qué unidad de medida tienes?"},
+            {"ES_whichMeasureUnitConvertTo", "¿A qué unidad de medida deseas convertir?"},
+            {"ES_convertedFromTo", "Has convertido de {0} {1} a {2}, lo que significa que ahora tienes {3} {4}."},
+            {"ES_enterNumberCakes", "Por favor, ingresa el número de pasteles:"},
+            {"ES_needDelivery", "¿Necesitas entrega a domicilio? Ingresa 1 para Sí, 0 para No:"},
+            {"ES_enterTipPercentage", "Por favor, ingresa el porcentaje de propina (por ejemplo, 20 para el 20%):"},
+            {"ES_grandTotal", "Tu total a pagar es de $"},
+            {"ES_changeBack", "¡Gracias! Tu cambio es $"},
+            {"ES_payBill", "Pagar cuenta: "},
+            {"ES_amountStillOwed", "La cantidad ingresada no es suficiente. Aún debes: $"},
+            {"ES_amount", "Cantidad: "},
+            {"ES_invalidNumber", "Por favor, ingresa un número válido."},
+            {"ES_pressContinue", "\nPresiona cualquier tecla para continuar..."},
+            {"ES_quart", "Cuarto de galón"},
+            {"ES_pint", "Pinta"},
+            {"ES_cup", "Taza"},
+            {"ES_ounce", "Onza"},
+            {"ES_tablespoon", "Cucharada"},
+            {"ES_teaspoon", "Cucharadita"},
+            {"ES_gallon", "Galón"},
+            {"ES_liter", "Litro"},
+            {"ES_orderMoreCakes", "¿Deseas pedir más pasteles? Ingresa 'sí' o 'no':"},
+            {"ES_invalidCakeNumber", "El número de pasteles ingresado es inválido. Por favor, ingresa al menos 1. Gracias <3"}
+        };
+    }
+    static void ChooseLanguage()
+    {
+        Console.WriteLine("Choose your language / Elige tu idioma:");
+        Console.WriteLine("1. English");
+        Console.WriteLine("2. Español");
+        string choice = Console.ReadLine();
+        Console.Clear();
+
+        currentLanguage = choice == "2" ? "ES" : "EN";
+    }
+
+    static string GetLocalizedString(string key)
+    {
+        string localizedKey = $"{currentLanguage}_{key}";
+        return options.TryGetValue(localizedKey, out var value) ? value : "Key not found";
+    }
+
+    static string MenuOptions()
+    {
+        Console.WriteLine(GetLocalizedString("convertUnits"));
+        Console.WriteLine(GetLocalizedString("pos"));
+        Console.WriteLine(GetLocalizedString("exit"));
+        Console.WriteLine(GetLocalizedString("switchLanguage")); 
+        Console.WriteLine(GetLocalizedString("promptChoice"));
+        return Console.ReadLine().ToUpper();
+    }
+
+   static void Route(string userInput)
+{
+    switch (userInput)
+    {
+        case "1":
+            ConvertUnit();
+            break;
+        case "2":
+            BakeMyDayPOS();
+            break;
+        case "3":
+            Console.WriteLine(GetLocalizedString("thankYou"));
+            break;
+        case "4": // New case for switching languages
+            SwitchLanguage();
+            break;
+        default:
+            Console.WriteLine(GetLocalizedString("invalidOption"));
+            Pause();
+            break;
+    }
+}
+
+static void SwitchLanguage()
+{
+    if (currentLanguage == "EN")
+    {
+        currentLanguage = "ES";
+    }
+    else
+    {
+        currentLanguage = "EN";
+    }
+    Console.Clear(); 
+}
+    static void ConvertUnit()
+    {
+        Console.WriteLine(GetLocalizedString("whichMeasureUnitHave"));
+        string startUnit = MeasureUnitMenu();
+        double startUnitAmt = GetMeasureAmt();
+
+        Console.WriteLine(GetLocalizedString("whichMeasureUnitConvertTo"));
+        string destUnit = MeasureUnitMenu();
+
+        double baseAmt = ConvertToBase(ref startUnit, startUnitAmt);
+        double destUnitAmt = ConvertFromBase(ref destUnit, baseAmt);
+
+        Console.WriteLine(string.Format(GetLocalizedString("convertedFromTo"), RoundNum(startUnitAmt), GetLocalizedString(startUnit), GetLocalizedString(destUnit), RoundNum(destUnitAmt), GetLocalizedString(destUnit)));
+        Pause();
+    }
+
+    static string MeasureUnitMenu()
+    {
+        Console.WriteLine("1. " + GetLocalizedString("quart"));
+        Console.WriteLine("2. " + GetLocalizedString("pint"));
+        Console.WriteLine("3. " + GetLocalizedString("cup"));
+        Console.WriteLine("4. " + GetLocalizedString("ounce"));
+        Console.WriteLine("5. " + GetLocalizedString("tablespoon"));
+        Console.WriteLine("6. " + GetLocalizedString("teaspoon"));
+        Console.WriteLine("7. " + GetLocalizedString("gallon"));
+        Console.WriteLine("8. " + GetLocalizedString("liter"));
+        Console.WriteLine(GetLocalizedString("promptChoice"));
+
+        string userInput = Console.ReadLine();
+        switch (userInput)
+        {
+            case "1":
+                return "quart";
+            case "2":
+                return "pint";
+            case "3":
+                return "cup";
+            case "4":
+                return "ounce";
+            case "5":
+                return "tablespoon";
+            case "6":
+                return "teaspoon";
+            case "7":
+                return "gallon";
+            case "8":
+                return "liter";
+            default:
+                Console.WriteLine(GetLocalizedString("invalidOption"));
+                return MeasureUnitMenu(); // Recursively call until valid input is received
+        }
+    }
+
+    static double GetMeasureAmt()
+    {
+        Console.WriteLine(GetLocalizedString("amount"));
+        while (true)
+        {
+            if (double.TryParse(Console.ReadLine(), out double amount))
+            {
+                return amount;
+            }
+            else
+            {
+                Console.WriteLine(GetLocalizedString("invalidNumber"));
+            }
+        }
+    }
+   static double ConvertToBase(ref string unit, double amount)
+    {
+        // Conversion rates from each unit to gallons
+        var rates = new Dictionary<string, double>
+        {
+            {"quart", 0.25},
+            {"pint", 0.125},
+            {"cup", 0.0625},
+            {"ounce", 0.0078125},
+            {"tablespoon", 0.00390625},
+            {"teaspoon", 0.00130208},
+            {"gallon", 1},
+            {"liter", 0.264172}
+        };
+
+        double conversionRate = rates.ContainsKey(unit) ? rates[unit] : 0;
+        return amount * conversionRate;
+    }
+
+    static double ConvertFromBase(ref string unit, double gallons)
+    {
+        // Conversion rates from gallons to each unit
+        var rates = new Dictionary<string, double>
+        {
+            {"quart", 4},
+            {"pint", 8},
+            {"cup", 16},
+            {"ounce", 128},git
+            {"tablespoon", 256},
+            {"teaspoon", 768},
+            {"gallon", 1},
+            {"liter", 3.78541}
+        };
+
+        double conversionRate = rates.ContainsKey(unit) ? rates[unit] : 0;
+        return gallons * conversionRate;
+    }
+static void BakeMyDayPOS()
+{
+    bool orderMoreCakes = true;
+
+    while (orderMoreCakes)
+    {
+    const double cakePrice = 28.63;
+    const double deliveryFee = 4.99;
+    const double taxRate = 0.07; // 7% tax rate
+    
+    int numberOfCakes = 0;
+     while (true)
+    {
+        Console.WriteLine(GetLocalizedString("enterNumberCakes"));
+        if (int.TryParse(Console.ReadLine(), out numberOfCakes) && numberOfCakes >= 1)
+        {
+                break; 
+        }
+        Console.WriteLine(GetLocalizedString("invalidCakeNumber")); 
+    }
+    
+    double cakesTotal = numberOfCakes * cakePrice;
+
+    int deliveryOption = GetDeliveryOption();
+    double deliveryTotal = deliveryOption == 1 ? deliveryFee : 0;
+
+    Console.WriteLine(GetLocalizedString("enterTipPercentage"));
+    double tipPercentage = double.TryParse(Console.ReadLine(), out double t) ? t / 100 : 0;
+    double tipTotal = cakesTotal * tipPercentage; // Tip based on cakes total
+
+    double subTotal = cakesTotal + deliveryTotal;
+    double taxTotal = subTotal * taxRate; // Calculate tax on subtotal
+    double grandTotal = subTotal + taxTotal + tipTotal; // Final total including tip and tax
+
+    Console.WriteLine($"{GetLocalizedString("grandTotal")}{RoundNum(grandTotal)}");
+
+    double changeDue = GetPayment(grandTotal); // Handle payment and calculate change due
+
+    Console.WriteLine($"{GetLocalizedString("changeBack")}{RoundNum(changeDue)}");
+
+    Console.WriteLine(GetLocalizedString("orderMoreCakes"));
+        string response = Console.ReadLine().Trim().ToUpper();
+
+        // Adjusting for localization
+        if (currentLanguage == "EN" && response == "NO" || currentLanguage == "ES" && response == "NO")
+        {
+            orderMoreCakes = false;
+        }
+        else if (currentLanguage == "ES" && !response.StartsWith("S")) // Spanish users might input 'SÍ'
+        {
+            orderMoreCakes = false;
+        }
+    }
+}
+static int GetDeliveryOption()
+{
+    while (true)
+    {
+        Console.WriteLine(GetLocalizedString("needDelivery"));
+        if (int.TryParse(Console.ReadLine(), out int deliveryOption) && (deliveryOption == 0 || deliveryOption == 1))
+        {
+            return deliveryOption;
+        }
+        else
+        {
+            Console.WriteLine(GetLocalizedString("invalidOption"));
+        }
+    }
+}
+static double GetPayment(double grandTotal)
+{
+    double totalPaid = 0.0;
+
+    while (true)
+    {
+        Console.Write(GetLocalizedString("payBill"));
+        double payment = GetMeasureAmt();
+        totalPaid += payment;
+
+        if (grandTotal - totalPaid > 0.005)
+        {
+            double amountStillOwed = grandTotal - totalPaid;
+            Console.WriteLine($"{GetLocalizedString("amountStillOwed")}{RoundNum(amountStillOwed)}");
+        }
+        else
+        {
+            break;
+        }
+    }
+    return totalPaid - grandTotal; 
+}
+
+static void Pause()
+{
+    Console.WriteLine(GetLocalizedString("pressContinue"));
+    Console.ReadKey();
+    Console.Clear();
+}
+static string RoundNum(double num)
+{
+    return num.ToString("0.00");  
+}
+
+}
+
